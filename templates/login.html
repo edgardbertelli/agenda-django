@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda de Eventos em Django - Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+
+    <form action="submit" method="POST">
+        {% csrf_token %}
+        <div align="center">
+            <label for="username">Usuário: </label>
+            <input type="text" id="username" name="username" placeholder="Usuário"><br><br>
+
+            <label for="password">Senha: </label>
+            <input type="password" id="password" name="password" placeholder="Senha"><br><br>
+
+            <button type="submit">Entrar</button>
+        </div>
+    </form>
+
+    {% for message in messages %}
+        <div align="center">
+             <strong>Erro: </strong>{{ message }}
+        </div>
+    {% endfor %}
+</body>
+</html>
