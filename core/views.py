@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
+
 # Create your views here.
 
 def login_user(request):
@@ -38,7 +39,11 @@ def lista_eventos(request):
 
 @login_required(login_url='/login/')
 def evento(request):
-    return render(request, 'evento.html')
+    evento_id = request.GET.get('id')
+    dados = {}
+    if evento_id:
+        dados['evento'] = Evento.objects.get(id=evento_id)
+    return render(request, 'evento.html', dados)
 
 
 @login_required(login_url='/login/')
@@ -48,8 +53,24 @@ def submit_evento(request):
         data_evento = request.POST.get('date')
         descricao = request.POST.get('description')
         usuario = request.user
-        Evento.objects.create(titulo=titulo,
-                              data_evento=data_evento,
-                              descricao=descricao,
-                              usuario=usuario)
+        evento_id = request.POST.get('evento_id')
+        if evento_id:
+            Evento.objects.filter(id=evento_id).update(titulo=titulo,
+                                                       data_evento=data_evento,
+                                                       descricao=descricao)
+        else:
+            Evento.objects.create(titulo=titulo,
+                                  data_evento=data_evento,
+                                  descricao=descricao,
+                                  usuario=usuario)
+
+    return redirect('/')
+
+
+@login_required(login_url='/login/')
+def delete_evento(request, evento_id):
+    usuario = request.user
+    evento = Evento.objects.get(id=evento_id)
+    if usuario == evento.usuario:
+        evento.delete()
     return redirect('/')
